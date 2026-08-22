@@ -233,7 +233,7 @@ print_summary() {
     echo "----------------------------------------"
     echo
     echo "A reboot is required once so gpio-poweroff can take effect."
-    echo "After that, run: ${green}power-latch${plain}"
+    echo -e "After that, run: ${green}power-latch${plain}"
     echo
 }
 
