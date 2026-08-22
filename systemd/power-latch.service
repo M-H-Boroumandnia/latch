@@ -1,0 +1,25 @@
+[Unit]
+Description=Hardware Power Latch Controller
+After=local-fs.target sysinit.target
+Before=shutdown.target reboot.target halt.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/power-latch/power-latch.conf
+Environment=PYTHONUNBUFFERED=1
+Environment=POWER_LATCH_CONFIG=/etc/power-latch/power-latch.conf
+ExecStart=/usr/bin/python3 /opt/power-latch/power_latch.py
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=10
+KillSignal=SIGTERM
+User=root
+Group=root
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=power-latch
+
+[Install]
+WantedBy=multi-user.target
