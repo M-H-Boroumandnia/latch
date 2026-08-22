@@ -29,15 +29,41 @@ logw() {
     echo -e "${yellow}[WRN]${plain} $*"
 }
 
+is_real_script() {
+    local path="$1"
+    [[ -f "${path}" ]] || return 1
+    case "${path}" in
+        /dev/fd/* | /proc/self/fd/* | /dev/stdin)
+            return 1
+            ;;
+    esac
+    return 0
+}
+
 require_root() {
     if [[ "${EUID}" -eq 0 ]]; then
+        if [[ "${BASH_SOURCE[0]:-}" == /tmp/power-latch-install.* ]]; then
+            trap 'rm -f "${BASH_SOURCE[0]}"' EXIT
+        fi
         return 0
     fi
+
     local script="${BASH_SOURCE[0]:-$0}"
-    if [[ -f "${script}" && "${script}" != /dev/fd/* ]]; then
+    if is_real_script "${script}"; then
         exec sudo -E bash "${script}" "$@"
     fi
-    exec sudo -E bash -s -- "$@" < "${script}"
+
+    local tmp url
+    tmp="$(mktemp /tmp/power-latch-install.XXXXXX)"
+    url="https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/install.sh"
+    logi "Re-running installer as root"
+    if ! curl -fsSL "${url}" -o "${tmp}"; then
+        rm -f "${tmp}"
+        loge "Failed to download installer for privilege elevation."
+        exit 1
+    fi
+    chmod 700 "${tmp}"
+    exec sudo -E env POWER_LATCH_REPO="${GITHUB_REPO}" POWER_LATCH_BRANCH="${GITHUB_BRANCH}" bash "${tmp}" "$@"
 }
 
 is_raspberry_pi() {
