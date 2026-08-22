@@ -7,7 +7,7 @@ yellow='\033[0;33m'
 blue='\033[0;34m'
 plain='\033[0m'
 
-GITHUB_REPO="${POWER_LATCH_REPO:-mohammadhosseinboroumandnia/latch}"
+GITHUB_REPO="${POWER_LATCH_REPO:-M-H-Boroumandnia/latch}"
 GITHUB_BRANCH="${POWER_LATCH_BRANCH:-main}"
 INSTALL_DIR="/opt/power-latch"
 CONF_DIR="/etc/power-latch"

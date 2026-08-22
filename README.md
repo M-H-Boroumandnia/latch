@@ -22,7 +22,7 @@ Buttons are wired from the GPIO to GND. The daemon uses internal pull-ups. The l
 ## Install
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mohammadhosseinboroumandnia/latch/main/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/M-H-Boroumandnia/latch/main/install.sh)
 ```
 
 From a local clone:
