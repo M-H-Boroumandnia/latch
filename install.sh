@@ -30,10 +30,14 @@ logw() {
 }
 
 require_root() {
-    if [[ "${EUID}" -ne 0 ]]; then
-        loge "Run this script as root."
-        exit 1
+    if [[ "${EUID}" -eq 0 ]]; then
+        return 0
     fi
+    local script="${BASH_SOURCE[0]:-$0}"
+    if [[ -f "${script}" && "${script}" != /dev/fd/* ]]; then
+        exec sudo -E bash "${script}" "$@"
+    fi
+    exec sudo -E bash -s -- "$@" < "${script}"
 }
 
 is_raspberry_pi() {
@@ -208,12 +212,13 @@ print_summary() {
 }
 
 maybe_open_menu() {
-    if [[ -t 0 && -x "${BIN_FILE}" ]]; then
-        echo
-        read -rp "Open the management menu now? [Y/n]: " answer || true
-        if [[ -z "${answer}" || "${answer}" =~ ^[Yy]$ ]]; then
-            exec "${BIN_FILE}"
-        fi
+    if [[ ! -x "${BIN_FILE}" || ! -r /dev/tty ]]; then
+        return 0
+    fi
+    echo
+    read -rp "Open the management menu now? [Y/n]: " answer </dev/tty || true
+    if [[ -z "${answer}" || "${answer}" =~ ^[Yy]$ ]]; then
+        exec "${BIN_FILE}" </dev/tty
     fi
 }
 
@@ -223,7 +228,7 @@ main() {
     local work_dir=""
     local already_installed=0
 
-    require_root
+    require_root "$@"
 
     if [[ -f "${INSTALL_DIR}/power_latch.py" ]]; then
         already_installed=1

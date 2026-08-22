@@ -21,8 +21,6 @@ Buttons are wired from the GPIO to GND. The daemon uses internal pull-ups. The l
 
 ## Install
 
-After this repository is on GitHub:
-
 ```bash
 bash <(curl -Ls https://raw.githubusercontent.com/mohammadhosseinboroumandnia/latch/main/install.sh)
 ```
@@ -43,12 +41,6 @@ The installer:
 6. Installs the `power-latch` command
 
 A reboot is required once after the first install so the overlay is loaded.
-
-If the GitHub path is different, set it before installing:
-
-```bash
-POWER_LATCH_REPO="your-user/your-repo" bash <(curl -Ls https://raw.githubusercontent.com/your-user/your-repo/main/install.sh)
-```
 
 ## Manage
 
